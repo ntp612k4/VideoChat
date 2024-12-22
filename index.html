@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
@@ -8,59 +9,122 @@
     <link rel='stylesheet' type='text/css' media='screen' href='styles/main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='styles/lobby.css'>
 </head>
+
 <body>
 
     <header id="nav">
-       <div class="nav--list">
-            <a id="create_logo" href="lobby.html"/>
-                <h3 id="logo">
-                    <!-- <img src="./images/logo.png" alt="Site Logo"> -->
-                    <span style="color: #00C5A7;">Video Call</span>
-                </h3>
+        <div class="nav--list">
+            <a id="create_logo" href="lobby.html" />
+            <h3 id="logo">
+                <!-- <img src="./images/logo.png" alt="Site Logo"> -->
+                <span style="color: #00C5A7;">Video Call</span>
+            </h3>
             </a>
-       </div>
-
-        <!-- <div id="nav__links"> -->
-            <!-- <a class="nav__link" href="/">
-                Trang Chủ
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ede0e0" viewBox="0 0 24 24"><path d="M20 7.093v-5.093h-3v2.093l3 3zm4 5.907l-12-12-12 12h3v10h7v-5h4v5h7v-10h3zm-5 8h-3v-5h-8v5h-3v-10.26l7-6.912 7 6.99v10.182z"/></svg>
-            </a> -->
-            <!-- <a class="nav__link" id="create__room__btn" href="lobby.html">
-                <svg width="24" height="24"></svg> -->
-               <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ede0e0" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z"/></svg> -->
-            <!-- </a>
-        </div> -->
+        </div>
     </header>
 
     <main id="room__lobby__container">
-        
         <div id="form__container">
-             <div id="form__container__header">
-                 <p>Đăng Nhập</p>
-             </div>
- 
- 
+            <div id="form__container__header">
+                <a href="index.html" id="login_tab" class="tab active">Đăng Nhập</a>
+                <a href="register.html" id="register_tab" class="tab non_ac">Đăng Ký</a>
+            </div>
+
             <form id="lobby__form">
- 
-                 <div class="form__field__wrapper">
-                     <label>Họ Tên </label>
-                     <input type="text" name="name" required placeholder="Nhập họ tên" />
-                 </div>
- 
-                 <div class="form__field__wrapper">
-                     <label>Số Phòng</label>
-                     <input type="text" name="room"  placeholder="Nhập số phòng" />
-                 </div>
- 
-                 <div class="form__field__wrapper"> 
-                     <button type="submit">Tham Gia Phòng
-                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/></svg>
+                <div class="form__field__wrapper">
+                    <label>Họ Tên </label>
+                    <input type="text" name="name" required placeholder="Nhập họ tên" />
+                </div>
+                <div class="form__field__wrapper">
+                    <label>Mật Khẩu</label>
+                    <input type="password" name="password" required placeholder="Nhập mật khẩu" />
+                </div>
+                <div class="form__field__wrapper">
+                    <label>Số Phòng</label>
+                    <input type="text" name="room" placeholder="Nhập số phòng" />
+                </div>
+
+                <div id="message" style="color: red; margin-top: 10px;"></div>
+
+                <div class="form__field__wrapper">
+                    <button type="submit">Tham Gia Phòng
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path
+                                d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z" />
+                        </svg>
                     </button>
-                 </div>
+                </div>
             </form>
         </div>
-     </main>
-    
+    </main>
+
+    <script>
+        let form = document.getElementById("lobby__form");
+
+        let displayName = sessionStorage.getItem("display_name");
+        if (displayName) {
+            form.name.value = displayName;
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();  // Ngăn chặn hành động submit mặc định của form
+
+            const name = document.querySelector("input[name='name']").value;
+            const password = document.querySelector("input[name='password']").value;
+            const room = document.querySelector("input[name='room']").value;
+            const messageDiv = document.getElementById("message");
+            const submitButton = document.querySelector("button[type='submit']");
+
+            // Lưu displayName vào sessionStorage
+            sessionStorage.setItem("display_name", name);
+
+            // Hiển thị loading trên nút đăng nhập
+            submitButton.disabled = true;
+            submitButton.textContent = "Đang kiểm tra...";
+
+            try {
+                const response = await fetch("http://localhost:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, password, room }), // Gửi thêm room nếu cần
+                });
+
+                const data = await response.json();
+                console.log("Response data:", data);  // Kiểm tra phản hồi từ server
+
+                if (response.ok) {
+                    // Đăng nhập thành công, hiển thị thông báo
+                    messageDiv.style.color = "green";
+                    messageDiv.textContent = data.message;
+
+                    let inviteCode = room;
+                    if (!inviteCode) {
+                        inviteCode = String(Math.floor(Math.random() * 10000));
+                    }
+
+                    // Đợi 1 giây rồi chuyển hướng vào room
+                    setTimeout(() => {
+                        window.location.href = `room.html?room=${inviteCode}`;  // Chuyển hướng vào room với mã phòng
+                    }, 1000);  // Đặt lại thành 1 giây nếu bạn muốn nhanh hơn
+                } else {
+                    // Đăng nhập thất bại - hiển thị lỗi
+                    messageDiv.style.color = "red";
+                    messageDiv.textContent = data.error;
+                    console.log("Error message:", data.error);  // In log thông báo lỗi
+                }
+            } catch (error) {
+                console.error("Error logging in:", error);
+                messageDiv.style.color = "red";
+                messageDiv.textContent = "Lỗi kết nối đến server!";
+            } finally {
+                // Kích hoạt lại nút và khôi phục văn bản
+                submitButton.disabled = false;
+                submitButton.textContent = "Tham Gia Phòng";
+            }
+        });
+    </script>
+
 </body>
 <script type="text/javascript" src="js/lobby.js"></script>
+
 </html>

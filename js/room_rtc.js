@@ -22,7 +22,7 @@ if (!roomId) {
 
 let displayName = sessionStorage.getItem("display_name");
 if (!displayName) {
-  window.location = "lobby.html";
+  window.location = "index.html";
 }
 
 let localTracks = [];
@@ -36,7 +36,7 @@ let joinRoomInit = async () => {
   await rtmClient.login({ uid, token });
 
   await rtmClient.addOrUpdateLocalUserAttributes({ name: displayName });
-  
+
   channel = await rtmClient.createChannel(roomId);
   await channel.join();
 
@@ -45,10 +45,9 @@ let joinRoomInit = async () => {
   channel.on("ChannelMessage", handleChannelMessage);
 
   getMembers();
-  addBotMessageToDom(`Xin chào bạn ${displayName}! 👋`);
+  addBotMessageToDom(`Xin chào ${displayName} đã tham gia phòng`);
 
-  client = 
-  ({ mode: "rtc", codec: "vp8" });
+  client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
   await client.join(APP_ID, roomId, token, uid);
 
   client.on("user-published", handleUserPublished);
@@ -262,6 +261,6 @@ document.getElementById("camera-btn").addEventListener("click", toggleCamera);
 document.getElementById("mic-btn").addEventListener("click", toggleMic);
 document.getElementById("screen-btn").addEventListener("click", toggleScreen);
 document.getElementById("join-btn").addEventListener("click", joinStream);
-document.getElementById("leave-btn").addEventListener("click", leaveStream);
+// document.getElementById("leave-btn").addEventListener("click", leaveStream);
 
 joinRoomInit();

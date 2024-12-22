@@ -14,7 +14,7 @@
   background-color:antiquewhite;
 }
 
-#form__container__header {
+/* #form__container__header {
   border-radius: 10px 10px 0 0;
   padding: 10px;
   text-align: center;
@@ -23,7 +23,7 @@
   font-size: 18px;
   font-size: 300;
   line-height: 0;
-}
+} */
 
 .form__field__wrapper {
   width: 100%;
@@ -89,4 +89,43 @@
 
 .avatar__option__selected {
   border: 3px solid #845695;
+}
+#form__container__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ff8c00;
+  border-radius: 10px 10px 0 0;
+}
+
+.tab {
+  text-decoration: none; /* Loại bỏ gạch chân */
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  color: white;
+  font-weight: normal;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+
+.separator {
+  width: 1px;
+  height: 24px;
+  background-color: white;
+}
+.active{
+  background-color: #ff8c00;
+}
+.non_ac{
+  background-color: #ffab44;
+
+}
+#message {
+  font-size: 14px;
+  color: red;
+  margin-top: 10px;
 }
