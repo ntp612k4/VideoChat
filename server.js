@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -10,6 +11,8 @@ const Message = require("./models/Message");
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // Kết nối tới MongoDB
 mongoose
