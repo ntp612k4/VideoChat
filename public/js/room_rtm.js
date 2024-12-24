@@ -7,7 +7,7 @@ let handleMemberJoined = async (MemberId) => {
 
   let { name } = await rtmClient.getUserAttributesByKeys(MemberId, ["name"]);
   addBotMessageToDom(`Xin chào ${name} đã tham gia phòng.`);
-  await fetch("http://localhost:5000/joinRoom", {
+  await fetch("https://videochat-1-jm13.onrender.com/joinRoom", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ roomId: roomId, member: name }),
@@ -36,10 +36,10 @@ let handleMemberLeft = async (MemberId) => {
   let name = memberWrapper.getElementsByClassName("member_name")[0].textContent;
 
   // Gửi thông tin người rời khỏi lên server
-  await fetch("http://localhost:5000/leaveRoom", {
+  await fetch("https://videochat-1-jm13.onrender.com/leaveRoom", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ roomId: roomId, member: name })
+    body: JSON.stringify({ roomId: roomId, member: name }),
   });
 
   removeMemberFromDom(MemberId, name);
@@ -98,7 +98,7 @@ let sendMessage = async (e) => {
   });
   addMessageToDom(displayName, message);
   e.target.reset();
-  await fetch("http://localhost:5000/message", {
+  await fetch("https://videochat-1-jm13.onrender.com/message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
