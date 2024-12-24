@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Room</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='styles/main.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='styles/register.css'>
+</head>
+
+<body>
+
+    <header id="nav">
+        <div class="nav--list">
+            <a id="create_logo" href="index.html" />
+            <h3 id="logo">
+                <!-- <img src="./images/logo.png" alt="Site Logo"> -->
+                <span style="color: #00C5A7;">Video Call</span>
+            </h3>
+            </a>
+        </div>
+
+    </header>
+
+    <main id="room__lobby__container">
+
+        <div id="form__container">
+            <div id="form__container__header">
+                <a href="index.html" id="login_tab" class="tab non_ac">Đăng Nhập</a>
+                <a href="register.html" id="register_tab" class="tab active">Đăng Ký</a>
+            </div>
+
+            <div id="alert-message"
+                style="display: none; padding: 10px; margin: 10px 0; text-align: center; border-radius: 5px;"></div>
+
+                <form id="lobby__form">
+                    <div class="form__field__wrapper">
+                        <label>Họ Tên </label>
+                        <input type="text" name="name" required placeholder="Nhập họ tên" />
+                    </div>
+                
+                    <div class="form__field__wrapper">
+                        <label>Email </label>
+                        <input type="email" name="email" required placeholder="Nhập email" /> <!-- Sửa type và name -->
+                    </div>
+                
+                    <div class="form__field__wrapper">
+                        <label>Mật Khẩu</label>
+                        <input type="password" name="password" required placeholder="Nhập mật khẩu" /> <!-- Sửa type và name -->
+                    </div>
+                
+                    <div class="form__field__wrapper">
+                        <label>Nhập Lại Mật Khẩu</label>
+                        <input type="password" name="confirmPassword" required placeholder="Nhập lại mật khẩu" /> <!-- Sửa type và name -->
+                    </div>
+                
+                    <div class="form__field__wrapper">
+                        <button type="submit">Tạo Tài Khoản</button> <!-- Sửa type thành submit -->
+                    </div>
+                </form>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('lobby__form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Lấy dữ liệu từ form
+            const name = document.querySelector('input[name="name"]').value;
+            const email = document.querySelector('input[name="email"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+
+            // Lấy element thông báo
+            const alertMessage = document.getElementById('alert-message');
+
+            // Kiểm tra form trống
+            if (!name || !email || !password || !confirmPassword) {
+                showAlert("Vui lòng điền đầy đủ thông tin!", "error");
+                return;
+            }
+
+            // Kiểm tra mật khẩu khớp nhau
+            if (password !== confirmPassword) {
+                showAlert("Mật khẩu không khớp!", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, password }),
+                });
+
+                const data = await response.json();
+                if (response.status === 201) {
+                    showAlert("Đăng ký tài khoản thành công! Đang chuyển hướng...", "success");
+                    // Đợi 2 giây trước khi chuyển hướng
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 2000);
+                } else {
+                    showAlert(data.error || "Đăng ký thất bại!", "error");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert("Lỗi kết nối server! Vui lòng thử lại sau.", "error");
+            }
+        });
+
+        // Hàm hiển thị thông báo
+        function showAlert(message, type) {
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.textContent = message;
+            alertMessage.style.display = 'block';
+
+            // Xóa các class cũ
+            alertMessage.classList.remove('alert-success', 'alert-error');
+
+            // Thêm class mới dựa vào type
+            if (type === 'success') {
+                alertMessage.classList.add('alert-success');
+            } else {
+                alertMessage.classList.add('alert-error');
+            }
+
+            // Tự động ẩn thông báo sau 5 giây nếu là lỗi
+            if (type === 'error') {
+                setTimeout(() => {
+                    alertMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+
+
+</body>
+<!-- <script type="text/javascript" src="./server.js"></script> -->
+
+</html>
